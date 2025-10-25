@@ -101,7 +101,8 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
       });
 
       if (response.data.success) {
-        setSuccess(`Release "${formData.release_name}" created successfully! Release ID: ${response.data.release_id}`);
+        setCreatedReleaseId(response.data.release_id);
+        setShowSuccessDialog(true);
         // Reset form
         setFormData({
           release_name: "",
