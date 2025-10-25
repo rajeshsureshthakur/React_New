@@ -199,7 +199,7 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
   };
 
   return (
-    <aside className="w-72 bg-card border-r border-border overflow-y-auto">
+    <aside className="w-80 bg-card border-r border-border overflow-y-auto">
       <div className="p-4 space-y-4">
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
           {activeTab === "zephyr" ? "Zephyr Options" : "Jira Options"}
