@@ -133,6 +133,24 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
 
   return (
     <div className="animate-fade-in flex justify-center">
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-success">
+              <CheckCircle2 className="w-5 h-5" />
+              Release Created Successfully
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              Release has been created successfully with ID: <span className="font-semibold text-foreground">{createdReleaseId}</span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end pt-4">
+            <Button onClick={() => setShowSuccessDialog(false)}>Close</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Card className="shadow-elegant w-full max-w-4xl">
         <CardHeader className="pb-4">
           <CardTitle className="text-xl">Create New Release</CardTitle>
@@ -148,9 +166,11 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
               </div>
             )}
 
-            {success && (
-              <div className="bg-success/10 text-success px-3 py-2 rounded-lg text-sm">
-                {success}
+            {/* Progress indicator while loading */}
+            {loading && (
+              <div className="bg-primary/10 text-primary px-3 py-2 rounded-lg text-sm flex items-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                Creating release...
               </div>
             )}
 
