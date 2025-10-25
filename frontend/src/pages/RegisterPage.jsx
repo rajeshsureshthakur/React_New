@@ -124,7 +124,7 @@ export const RegisterPage = () => {
         passcode: formData.passcode,
         zephyr_token: formData.zephyr_token,
         jira_token: formData.jira_token,
-        selected_project_id: formData.selected_project_id,
+        selected_project_id: parseInt(formData.selected_project_id),
         manager_soeid: formData.manager_soeid,
         projects_data: projects
       });
@@ -170,7 +170,7 @@ export const RegisterPage = () => {
               
               {/* SOEID */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="soeid" className="text-foreground w-32 text-right">
+                <Label htmlFor="soeid" className="text-foreground w-32 text-right whitespace-nowrap">
                   SOEID <span className="text-destructive">*</span>:
                 </Label>
                 <div className="flex-1 relative">
@@ -190,7 +190,7 @@ export const RegisterPage = () => {
 
               {/* Full Name */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="full_name" className="text-foreground w-32 text-right">
+                <Label htmlFor="full_name" className="text-foreground w-32 text-right whitespace-nowrap">
                   Full Name <span className="text-destructive">*</span>:
                 </Label>
                 <div className="flex-1">
@@ -207,7 +207,7 @@ export const RegisterPage = () => {
 
               {/* Passcode */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="passcode" className="text-foreground w-32 text-right">
+                <Label htmlFor="passcode" className="text-foreground w-32 text-right whitespace-nowrap">
                   Passcode <span className="text-destructive">*</span>:
                 </Label>
                 <div className="flex-1 relative">
@@ -230,12 +230,12 @@ export const RegisterPage = () => {
 
               {/* Zephyr Token */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="zephyr_token" className="text-foreground w-32 text-right flex items-center justify-end gap-1">
+                <Label htmlFor="zephyr_token" className="text-foreground w-32 text-right whitespace-nowrap flex items-center justify-end gap-1">
                   Zephyr Token <span className="text-destructive">*</span>:
                   <div className="group relative">
                     <Info className="w-4 h-4 text-muted-foreground cursor-help" />
-                    <div className="absolute left-0 top-6 w-64 p-2 bg-popover text-popover-foreground text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                      API token for Zephyr integration
+                    <div className="absolute left-0 top-6 w-72 p-3 bg-popover text-popover-foreground text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-border">
+                      Please get zephyr token from accounts section from Zephyr portal
                     </div>
                   </div>
                 </Label>
@@ -263,7 +263,7 @@ export const RegisterPage = () => {
               {/* Project Selection - shown after token validation */}
               {tokenValidated && projects.length > 0 && (
                 <div className="flex items-center gap-4">
-                  <Label htmlFor="selected_project_id" className="text-foreground w-32 text-right">
+                  <Label htmlFor="selected_project_id" className="text-foreground w-32 text-right whitespace-nowrap">
                     Project <span className="text-destructive">*</span>:
                   </Label>
                   <div className="flex-1">
@@ -272,11 +272,11 @@ export const RegisterPage = () => {
                       onValueChange={(value) => setFormData(prev => ({...prev, selected_project_id: value}))}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a project" options={projects} value={formData.selected_project_id} />
+                        <SelectValue placeholder="Select a project" options={projects.map(p => ({value: String(p.id), label: p.name}))} value={formData.selected_project_id} />
                       </SelectTrigger>
                       <SelectContent>
                         {projects.map((project) => (
-                          <SelectItem key={project.id} value={project.id}>
+                          <SelectItem key={project.id} value={String(project.id)}>
                             {project.name} (ID: {project.id})
                           </SelectItem>
                         ))}
@@ -288,12 +288,12 @@ export const RegisterPage = () => {
 
               {/* Jira Token */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="jira_token" className="text-foreground w-32 text-right flex items-center justify-end gap-1">
+                <Label htmlFor="jira_token" className="text-foreground w-32 text-right whitespace-nowrap flex items-center justify-end gap-1">
                   Jira Token <span className="text-destructive">*</span>:
                   <div className="group relative">
                     <Info className="w-4 h-4 text-muted-foreground cursor-help" />
-                    <div className="absolute left-0 top-6 w-64 p-2 bg-popover text-popover-foreground text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                      API token for Jira integration
+                    <div className="absolute left-0 top-6 w-72 p-3 bg-popover text-popover-foreground text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-border">
+                      Please get jira token from accounts section from Jira portal
                     </div>
                   </div>
                 </Label>
@@ -313,7 +313,7 @@ export const RegisterPage = () => {
 
               {/* Manager SOEID */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="manager_soeid" className="text-foreground w-32 text-right">
+                <Label htmlFor="manager_soeid" className="text-foreground w-32 text-right whitespace-nowrap">
                   Manager SOEID <span className="text-destructive">*</span>:
                 </Label>
                 <div className="flex-1 relative">

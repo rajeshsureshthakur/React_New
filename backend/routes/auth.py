@@ -21,7 +21,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 480
 
 
 class ZephyrProject(BaseModel):
-    id: str
+    id: int
     name: str
 
 
@@ -35,7 +35,7 @@ class RegisterRequest(BaseModel):
     passcode: str = Field(..., min_length=4, max_length=4, description="4 digit passcode")
     zephyr_token: str = Field(..., description="Zephyr API token")
     jira_token: str = Field(..., description="Jira API token")
-    selected_project_id: str = Field(..., description="Selected Project ID")
+    selected_project_id: int = Field(..., description="Selected Project ID")
     manager_soeid: str = Field(..., description="Manager/Lead SOEID")
     projects_data: List[ZephyrProject] = Field(..., description="Projects fetched from Zephyr")
     
@@ -97,14 +97,15 @@ async def validate_zephyr_token(request: ValidateZephyrTokenRequest):
                 detail="Invalid Zephyr token format"
             )
         
-        # Mock Zephyr API response - simulating project data
+        # Mock Zephyr API response - simulating project data with integer IDs
         # In production, you would call: GET https://api.zephyrscale.smartbear.com/v2/projects
         mock_projects = [
-            {"id": "PROJ001", "name": "CQE Platform"},
-            {"id": "PROJ002", "name": "Test Automation Suite"},
-            {"id": "PROJ003", "name": "API Gateway"},
-            {"id": "PROJ004", "name": "Analytics Engine"},
-            {"id": "PROJ005", "name": "Mobile Application"},
+            {"id": 92, "name": "CQE Platform"},
+            {"id": 101, "name": "Test Automation Suite"},
+            {"id": 115, "name": "API Gateway"},
+            {"id": 128, "name": "Analytics Engine"},
+            {"id": 147, "name": "Mobile Application"},
+            {"id": 156, "name": "Data Pipeline"},
         ]
         
         logger.info(f"✅ Zephyr token validated, returning {len(mock_projects)} projects")
@@ -147,7 +148,7 @@ async def register(request: RegisterRequest):
         hashed_password = hash_password(request.passcode)
         
         # Extract project IDs for zephyr_projectlist (comma-separated)
-        project_ids = ",".join([p.id for p in request.projects_data])
+        project_ids = ",".join([str(p.id) for p in request.projects_data])
         
         # Create user document with specified defaults
         user_doc = {
@@ -159,7 +160,7 @@ async def register(request: RegisterRequest):
             "user_teamid": "1",  # Default as specified
             "zephyr_token": request.zephyr_token,
             "jira_token": request.jira_token,
-            "zephyr_projectid": request.selected_project_id,
+            "zephyr_projectid": request.selected_project_id,  # Only selected project ID
             "jira_projectid": request.selected_project_id,  # Same as zephyr_projectid
             "manager_soeid": request.manager_soeid,
             "last_login": get_est_time(),
@@ -185,8 +186,8 @@ async def register(request: RegisterRequest):
                 })
         
         logger.info(f"✅ New user registered: {request.soeid}")
-        logger.info(f"   Projects saved: {project_ids}")
-        logger.info(f"   Selected project: {request.selected_project_id}")
+        logger.info(f"   All Projects: {project_ids}")
+        logger.info(f"   Selected project ID: {request.selected_project_id}")
         
         return {
             "success": True,
