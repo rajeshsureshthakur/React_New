@@ -23,13 +23,13 @@ async def get_releases_by_project(project_id: int):
         # Fetch releases from database
         releases = await releases_collection.find(
             {"project_id": project_id}
-        ).sort("release_id", -1).to_list(length=None)
+        ).sort("id", -1).to_list(length=None)
         
         # Format response
         result = [
             {
-                "id": r['release_id'],
-                "name": r.get('release_name', f"Release {r['release_id']}"),
+                "id": r['id'],
+                "name": r.get('name', f"Release {r['id']}"),
                 "project_id": r['project_id']
             }
             for r in releases
