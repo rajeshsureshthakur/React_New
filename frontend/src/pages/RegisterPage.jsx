@@ -110,7 +110,7 @@ export const RegisterPage = () => {
             <CardDescription>Fill in your details to create an account</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
               {error && (
                 <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-lg text-sm">
                   {error}
@@ -118,18 +118,17 @@ export const RegisterPage = () => {
               )}
               
               {/* SOEID */}
-              <div className="space-y-2">
-                <Label htmlFor="soeid" className="text-foreground">
-                  SOEID <span className="text-destructive">*</span>
-                  <span className="text-xs text-muted-foreground ml-2">(2 letters + 5 digits, e.g., AB12345)</span>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="soeid" className="text-foreground w-40 text-right">
+                  SOEID <span className="text-destructive">*</span>:
                 </Label>
-                <div className="relative">
+                <div className="flex-1 relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="soeid"
                     name="soeid"
                     type="text"
-                    placeholder="AB12345"
+                    placeholder="2 letters + 5 digits (e.g., AB12345)"
                     value={formData.soeid}
                     onChange={handleChange}
                     className="pl-10"
@@ -139,33 +138,34 @@ export const RegisterPage = () => {
               </div>
 
               {/* Full Name */}
-              <div className="space-y-2">
-                <Label htmlFor="full_name" className="text-foreground">
-                  Full Name <span className="text-destructive">*</span>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="full_name" className="text-foreground w-40 text-right">
+                  Full Name <span className="text-destructive">*</span>:
                 </Label>
-                <Input
-                  id="full_name"
-                  name="full_name"
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={formData.full_name}
-                  onChange={handleChange}
-                />
+                <div className="flex-1">
+                  <Input
+                    id="full_name"
+                    name="full_name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={formData.full_name}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
 
               {/* Passcode */}
-              <div className="space-y-2">
-                <Label htmlFor="passcode" className="text-foreground">
-                  Passcode <span className="text-destructive">*</span>
-                  <span className="text-xs text-muted-foreground ml-2">(4 digits)</span>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="passcode" className="text-foreground w-40 text-right">
+                  Passcode <span className="text-destructive">*</span>:
                 </Label>
-                <div className="relative">
+                <div className="flex-1 relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="passcode"
                     name="passcode"
                     type="password"
-                    placeholder="••••"
+                    placeholder="4 digits"
                     maxLength={4}
                     value={formData.passcode}
                     onChange={(e) => {
@@ -178,9 +178,9 @@ export const RegisterPage = () => {
               </div>
 
               {/* Zephyr Token */}
-              <div className="space-y-2">
-                <Label htmlFor="zephyr_token" className="text-foreground flex items-center gap-2">
-                  Zephyr Token <span className="text-destructive">*</span>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="zephyr_token" className="text-foreground w-40 text-right flex items-center justify-end gap-1">
+                  Zephyr Token <span className="text-destructive">*</span>:
                   <div className="group relative">
                     <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                     <div className="absolute left-0 top-6 w-64 p-2 bg-popover text-popover-foreground text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
@@ -188,7 +188,7 @@ export const RegisterPage = () => {
                     </div>
                   </div>
                 </Label>
-                <div className="relative">
+                <div className="flex-1 relative">
                   <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="zephyr_token"
@@ -203,9 +203,9 @@ export const RegisterPage = () => {
               </div>
 
               {/* Jira Token */}
-              <div className="space-y-2">
-                <Label htmlFor="jira_token" className="text-foreground flex items-center gap-2">
-                  Jira Token <span className="text-destructive">*</span>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="jira_token" className="text-foreground w-40 text-right flex items-center justify-end gap-1">
+                  Jira Token <span className="text-destructive">*</span>:
                   <div className="group relative">
                     <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                     <div className="absolute left-0 top-6 w-64 p-2 bg-popover text-popover-foreground text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
@@ -213,7 +213,7 @@ export const RegisterPage = () => {
                     </div>
                   </div>
                 </Label>
-                <div className="relative">
+                <div className="flex-1 relative">
                   <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="jira_token"
@@ -228,48 +228,51 @@ export const RegisterPage = () => {
               </div>
 
               {/* Project ID */}
-              <div className="space-y-2">
-                <Label htmlFor="project_id" className="text-foreground">
-                  Project ID <span className="text-destructive">*</span>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="project_id" className="text-foreground w-40 text-right">
+                  Project ID <span className="text-destructive">*</span>:
                 </Label>
-                <Input
-                  id="project_id"
-                  name="project_id"
-                  type="text"
-                  placeholder="Enter project ID"
-                  value={formData.project_id}
-                  onChange={handleChange}
-                />
+                <div className="flex-1">
+                  <Input
+                    id="project_id"
+                    name="project_id"
+                    type="text"
+                    placeholder="Enter project ID"
+                    value={formData.project_id}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
 
               {/* Project Name */}
-              <div className="space-y-2">
-                <Label htmlFor="project_name" className="text-foreground">
-                  Project Name <span className="text-destructive">*</span>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="project_name" className="text-foreground w-40 text-right">
+                  Project Name <span className="text-destructive">*</span>:
                 </Label>
-                <Input
-                  id="project_name"
-                  name="project_name"
-                  type="text"
-                  placeholder="Enter project name"
-                  value={formData.project_name}
-                  onChange={handleChange}
-                />
+                <div className="flex-1">
+                  <Input
+                    id="project_name"
+                    name="project_name"
+                    type="text"
+                    placeholder="Enter project name"
+                    value={formData.project_name}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
 
               {/* Manager SOEID */}
-              <div className="space-y-2">
-                <Label htmlFor="manager_soeid" className="text-foreground">
-                  Manager/Lead SOEID <span className="text-destructive">*</span>
-                  <span className="text-xs text-muted-foreground ml-2">(2 letters + 5 digits)</span>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="manager_soeid" className="text-foreground w-40 text-right">
+                  Manager SOEID <span className="text-destructive">*</span>:
                 </Label>
-                <div className="relative">
+                <div className="flex-1 relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="manager_soeid"
                     name="manager_soeid"
                     type="text"
-                    placeholder="AB12345"
+                    placeholder="2 letters + 5 digits (e.g., AB12345)"
                     value={formData.manager_soeid}
                     onChange={handleChange}
                     className="pl-10"
