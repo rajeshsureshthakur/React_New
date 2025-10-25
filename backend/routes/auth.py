@@ -1,19 +1,52 @@
-"""Authentication API Routes
-
-Handles user login, registration, and token management.
-"""
+"""Authentication API Routes with MongoDB"""
 
 from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
+import hashlib
 import logging
+import re
 from typing import Optional
+from datetime import datetime, timedelta
+from jose import jwt
 
-from config.queries import UserQueries
-from utils.database import db_manager
-from utils.auth import verify_password, create_access_token, hash_password
+from database.mongodb import users_collection, get_est_time
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+# JWT Configuration
+JWT_SECRET_KEY = "your-secret-key-change-in-production"
+JWT_ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 480
+
+
+class RegisterRequest(BaseModel):
+    soeid: str = Field(..., description="SOEID in format: 2 letters + 5 digits")
+    full_name: str = Field(..., description="Full name of the user")
+    passcode: str = Field(..., min_length=4, max_length=4, description="4 digit passcode")
+    zephyr_token: str = Field(..., description="Zephyr API token")
+    jira_token: str = Field(..., description="Jira API token")
+    project_id: str = Field(..., description="Project ID")
+    project_name: str = Field(..., description="Project Name")
+    manager_soeid: str = Field(..., description="Manager/Lead SOEID")
+    
+    @validator('soeid')
+    def validate_soeid(cls, v):
+        if not re.match(r'^[A-Za-z]{2}\d{5}$', v):
+            raise ValueError('SOEID must be in format: 2 letters + 5 digits (e.g., AB12345)')
+        return v.upper()
+    
+    @validator('passcode')
+    def validate_passcode(cls, v):
+        if not v.isdigit():
+            raise ValueError('Passcode must be 4 digits')
+        return v
+    
+    @validator('manager_soeid')
+    def validate_manager_soeid(cls, v):
+        if not re.match(r'^[A-Za-z]{2}\d{5}$', v):
+            raise ValueError('Manager SOEID must be in format: 2 letters + 5 digits (e.g., AB12345)')
+        return v.upper()
 
 
 class LoginRequest(BaseModel):
@@ -28,20 +61,91 @@ class LoginResponse(BaseModel):
     user: Optional[dict] = None
 
 
-class RegisterRequest(BaseModel):
-    soeid: str
-    name: str
-    passcode: str
-    role: str = "Developer"
-    team_id: str = "TEAM-A"
+def hash_password(password: str) -> str:
+    """Hash password using SHA256"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+def create_access_token(data: dict) -> str:
+    """Create JWT access token"""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+
+
+@router.post("/register")
+async def register(request: RegisterRequest):
+    """Register a new user"""
+    try:
+        # Check if user already exists
+        existing_user = await users_collection.find_one({"user_soeid": request.soeid})
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User with this SOEID already exists"
+            )
+        
+        # Get next user ID
+        last_user = await users_collection.find_one(
+            sort=[("user_id", -1)]
+        )
+        next_user_id = (last_user['user_id'] if last_user else 0) + 1
+        
+        # Hash password
+        hashed_password = hash_password(request.passcode)
+        
+        # Create user document with specified defaults
+        user_doc = {
+            "user_id": next_user_id,
+            "user_soeid": request.soeid,
+            "user_name": request.full_name,
+            "user_password": hashed_password,
+            "user_role": "developer",  # Default as specified
+            "user_teamid": "1",  # Default as specified
+            "zephyr_token": request.zephyr_token,
+            "jira_token": request.jira_token,
+            "zephyr_projectid": request.project_id,
+            "jira_projectid": request.project_id,  # Same as zephyr_projectid
+            "project_name": request.project_name,
+            "manager_soeid": request.manager_soeid,
+            "last_login": get_est_time(),
+            "manager_verified": "0",  # Default as specified
+            "zephyr_projectlist": "1,2,3,4",  # Default as specified
+            "curr_version": "1.4",  # Default as specified
+            "lib_flag": "No",  # Default as specified
+            "created_at": get_est_time()
+        }
+        
+        # Insert user
+        result = await users_collection.insert_one(user_doc)
+        
+        logger.info(f"✅ New user registered: {request.soeid}")
+        
+        return {
+            "success": True,
+            "message": "Registration successful. Please login.",
+            "user_id": next_user_id
+        }
+        
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(f"❌ Registration error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred during registration"
+        )
 
 
 @router.post("/login", response_model=LoginResponse)
 async def login(request: LoginRequest):
-    """Authenticate user with SOEID and passcode
-    
-    Used in: Login page
-    """
+    """Authenticate user with SOEID and passcode"""
     try:
         # Validate inputs
         if not request.soeid or not request.passcode:
@@ -57,10 +161,7 @@ async def login(request: LoginRequest):
             )
         
         # Get user from database
-        user = db_manager.execute_one(
-            UserQueries.GET_USER_BY_SOEID,
-            {"soeid": request.soeid}
-        )
+        user = await users_collection.find_one({"user_soeid": request.soeid.upper()})
         
         if not user:
             raise HTTPException(
@@ -69,35 +170,35 @@ async def login(request: LoginRequest):
             )
         
         # Verify password
-        if not verify_password(request.passcode, user['USER_PASSWORD']):
+        if hash_password(request.passcode) != user['user_password']:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid SOEID or passcode"
             )
         
         # Update last login
-        db_manager.execute_update(
-            UserQueries.UPDATE_LAST_LOGIN,
-            {"user_id": user['USER_ID']}
+        await users_collection.update_one(
+            {"user_id": user['user_id']},
+            {"$set": {"last_login": get_est_time()}}
         )
         
         # Create JWT token
         token = create_access_token(
             data={
-                "user_id": user['USER_ID'],
-                "soeid": user['USER_SOEID'],
-                "role": user['USER_ROLE']
+                "user_id": user['user_id'],
+                "soeid": user['user_soeid'],
+                "role": user['user_role']
             }
         )
         
         # Prepare user data (exclude password)
         user_data = {
-            "user_id": user['USER_ID'],
-            "soeid": user['USER_SOEID'],
-            "name": user['USER_NAME'],
-            "role": user['USER_ROLE'],
-            "team_id": user['USER_TEAMID'],
-            "project_list": user['ZEPHYR_PROJECTLIST']
+            "user_id": user['user_id'],
+            "soeid": user['user_soeid'],
+            "name": user['user_name'],
+            "role": user['user_role'],
+            "team_id": user['user_teamid'],
+            "project_list": user.get('zephyr_projectlist', '')
         }
         
         logger.info(f"✅ User logged in: {request.soeid}")
@@ -116,64 +217,4 @@ async def login(request: LoginRequest):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred during login"
-        )
-
-
-@router.post("/register")
-async def register(request: RegisterRequest):
-    """Register a new user
-    
-    Used in: Registration page
-    """
-    try:
-        # Check if user already exists
-        existing_user = db_manager.execute_one(
-            UserQueries.GET_USER_BY_SOEID,
-            {"soeid": request.soeid}
-        )
-        
-        if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User with this SOEID already exists"
-            )
-        
-        # Get next user ID
-        from config.queries import UtilityQueries
-        result = db_manager.execute_one(UtilityQueries.GET_NEXT_USER_ID)
-        next_id = result['NEXT_ID']
-        
-        # Hash password
-        hashed_password = hash_password(request.passcode)
-        
-        # Insert user
-        db_manager.execute_update(
-            UserQueries.INSERT_USER,
-            {
-                "user_id": next_id,
-                "soeid": request.soeid,
-                "user_name": request.name,
-                "password": hashed_password,
-                "role": request.role,
-                "team_id": request.team_id,
-                "manager_verified": "NO",
-                "version": "1.0",
-                "lib_flag": "N"
-            }
-        )
-        
-        logger.info(f"✅ New user registered: {request.soeid}")
-        
-        return {
-            "success": True,
-            "message": "Registration successful. Please login."
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Registration error: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred during registration"
         )
