@@ -4,6 +4,7 @@ import { Sidebar } from "../components/Sidebar";
 import { ZephyrContent } from "../components/ZephyrContent";
 import { JiraContent } from "../components/JiraContent";
 import { CreateReleaseForm } from "../components/CreateReleaseForm";
+import { ImportRequirementsForm } from "../components/ImportRequirementsForm";
 
 export const Dashboard = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState("zephyr");
