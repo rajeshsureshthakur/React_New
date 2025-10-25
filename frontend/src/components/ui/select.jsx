@@ -44,7 +44,9 @@ const SelectContent = ({ className, children, open, setOpen, onValueChange, ...p
   React.useEffect(() => {
     const handleClickOutside = (event) => {
       if (contentRef.current && !contentRef.current.contains(event.target)) {
-        setOpen(false);
+        if (setOpen && typeof setOpen === 'function') {
+          setOpen(false);
+        }
       }
     };
 
@@ -69,9 +71,12 @@ const SelectContent = ({ className, children, open, setOpen, onValueChange, ...p
       {...props}
     >
       <div className="p-1">
-        {React.Children.map(children, child =>
-          React.cloneElement(child, { onValueChange, setOpen })
-        )}
+        {React.Children.map(children, child => {
+          if (React.isValidElement(child)) {
+            return React.cloneElement(child, { onValueChange, setOpen });
+          }
+          return child;
+        })}
       </div>
     </div>
   );
