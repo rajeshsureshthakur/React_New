@@ -3,19 +3,36 @@ import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
 import { ZephyrContent } from "../components/ZephyrContent";
 import { JiraContent } from "../components/JiraContent";
+import { CreateReleaseForm } from "../components/CreateReleaseForm";
 
 export const Dashboard = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState("zephyr");
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedRelease, setSelectedRelease] = useState(null);
+  const [activeView, setActiveView] = useState("dashboard"); // "dashboard" or "create-release"
 
   const handleProjectChange = (projectId, projectName) => {
     setSelectedProject({ id: projectId, name: projectName });
     setSelectedRelease(null); // Reset release when project changes
+    setActiveView("dashboard"); // Go back to dashboard when project changes
   };
 
   const handleReleaseChange = (releaseId, releaseName) => {
     setSelectedRelease({ id: releaseId, name: releaseName });
+    setActiveView("dashboard"); // Go back to dashboard when release changes
+  };
+
+  const handleMenuAction = (action) => {
+    if (action === "create-release") {
+      setActiveView("create-release");
+    } else {
+      setActiveView("dashboard");
+    }
+  };
+
+  const handleReleaseCreated = () => {
+    // Refresh will happen automatically when user selects the project again
+    setActiveView("dashboard");
   };
 
   return (
@@ -34,23 +51,32 @@ export const Dashboard = ({ onLogout }) => {
         {/* Sidebar */}
         <Sidebar 
           activeTab={activeTab}
+          selectedProject={selectedProject}
           selectedRelease={selectedRelease}
           onProjectChange={handleProjectChange}
           onReleaseChange={handleReleaseChange}
+          onMenuAction={handleMenuAction}
         />
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto bg-muted/30 p-6">
-          {activeTab === "zephyr" ? (
-            <ZephyrContent 
+          {activeView === "create-release" ? (
+            <CreateReleaseForm 
               selectedProject={selectedProject}
-              selectedRelease={selectedRelease}
+              onReleaseCreated={handleReleaseCreated}
             />
           ) : (
-            <JiraContent 
-              selectedProject={selectedProject}
-              selectedRelease={selectedRelease}
-            />
+            activeTab === "zephyr" ? (
+              <ZephyrContent 
+                selectedProject={selectedProject}
+                selectedRelease={selectedRelease}
+              />
+            ) : (
+              <JiraContent 
+                selectedProject={selectedProject}
+                selectedRelease={selectedRelease}
+              />
+            )
           )}
         </main>
       </div>
