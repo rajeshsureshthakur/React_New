@@ -26,7 +26,7 @@ import {
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onReleaseChange }) => {
+export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onReleaseChange, onMenuAction }) => {
   const [expandedSection, setExpandedSection] = useState(null);
   const [projects, setProjects] = useState([]);
   const [releases, setReleases] = useState([]);
