@@ -3,32 +3,19 @@ import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
 import { ZephyrContent } from "../components/ZephyrContent";
 import { JiraContent } from "../components/JiraContent";
-import { ProjectSelectionModal } from "../components/ProjectSelectionModal";
 
 export const Dashboard = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState("zephyr");
-  const [showModal, setShowModal] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedRelease, setSelectedRelease] = useState(null);
 
-  useEffect(() => {
-    // Check if project and release are already selected
-    const savedProject = localStorage.getItem("cqe_selected_project");
-    const savedRelease = localStorage.getItem("cqe_selected_release");
-    
-    if (savedProject && savedRelease) {
-      setSelectedProject(JSON.parse(savedProject));
-      setSelectedRelease(JSON.parse(savedRelease));
-      setShowModal(false);
-    }
-  }, []);
+  const handleProjectChange = (projectId, projectName) => {
+    setSelectedProject({ id: projectId, name: projectName });
+    setSelectedRelease(null); // Reset release when project changes
+  };
 
-  const handleProjectSelection = (project, release) => {
-    setSelectedProject(project);
-    setSelectedRelease(release);
-    localStorage.setItem("cqe_selected_project", JSON.stringify(project));
-    localStorage.setItem("cqe_selected_release", JSON.stringify(release));
-    setShowModal(false);
+  const handleReleaseChange = (releaseId, releaseName) => {
+    setSelectedRelease({ id: releaseId, name: releaseName });
   };
 
   return (
@@ -45,7 +32,12 @@ export const Dashboard = ({ onLogout }) => {
       {/* Main Content Area */}
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Sidebar */}
-        <Sidebar activeTab={activeTab} />
+        <Sidebar 
+          activeTab={activeTab}
+          selectedRelease={selectedRelease}
+          onProjectChange={handleProjectChange}
+          onReleaseChange={handleReleaseChange}
+        />
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto bg-muted/30 p-6">
@@ -62,12 +54,6 @@ export const Dashboard = ({ onLogout }) => {
           )}
         </main>
       </div>
-
-      {/* Project Selection Modal */}
-      <ProjectSelectionModal
-        open={showModal}
-        onSelect={handleProjectSelection}
-      />
     </div>
   );
 };
