@@ -289,7 +289,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.load_test_phases}
                     onChange={handleChange}
                     disabled={loading}
-                    className="h-9"
+                    className="h-9 max-w-[90px]"
                   />
                 </div>
 
@@ -305,7 +305,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.endurance_test_phases}
                     onChange={handleChange}
                     disabled={loading}
-                    className="h-9"
+                    className="h-9 max-w-[90px]"
                   />
                 </div>
 
@@ -321,7 +321,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.sanity_test_phases}
                     onChange={handleChange}
                     disabled={loading}
-                    className="h-9"
+                    className="h-9 max-w-[90px]"
                   />
                 </div>
 
@@ -337,7 +337,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.standalone_test_phases}
                     onChange={handleChange}
                     disabled={loading}
-                    className="h-9"
+                    className="h-9 max-w-[90px]"
                   />
                 </div>
               </div>
