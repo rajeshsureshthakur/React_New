@@ -26,6 +26,8 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [createdReleaseId, setCreatedReleaseId] = useState(null);
 
   const user = JSON.parse(localStorage.getItem("cqe_user") || "{}");
 
