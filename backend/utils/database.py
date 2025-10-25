@@ -28,8 +28,7 @@ class DatabaseManager:
                 dsn=ORACLE_CONFIG['dsn'],
                 min=ORACLE_CONFIG.get('min_pool', 2),
                 max=ORACLE_CONFIG.get('max_pool', 10),
-                increment=ORACLE_CONFIG.get('increment', 1),
-                encoding=ORACLE_CONFIG.get('encoding', 'UTF-8')
+                increment=ORACLE_CONFIG.get('increment', 1)
             )
             logger.info("✅ Oracle connection pool created successfully")
         except Exception as e:
