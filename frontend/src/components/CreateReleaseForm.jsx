@@ -128,61 +128,68 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
   };
 
   return (
-    <div className="animate-fade-in max-w-4xl">
+    <div className="animate-fade-in max-w-5xl">
       <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle className="text-2xl">Create New Release</CardTitle>
-          <CardDescription>
-            Create a new release for project: <span className="font-semibold text-foreground">{selectedProject?.name}</span>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl">Create New Release</CardTitle>
+          <CardDescription className="text-sm">
+            Project: <span className="font-semibold text-foreground">{selectedProject?.name}</span>
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-lg text-sm">
+              <div className="bg-destructive/10 text-destructive px-3 py-2 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="bg-success/10 text-success px-4 py-3 rounded-lg text-sm">
+              <div className="bg-success/10 text-success px-3 py-2 rounded-lg text-sm">
                 {success}
               </div>
             )}
 
-            {/* Release Name */}
-            <div className="space-y-2">
-              <Label htmlFor="release_name">New Release Name <span className="text-destructive">*</span></Label>
-              <Input
-                id="release_name"
-                name="release_name"
-                type="text"
-                placeholder="e.g., Release 2.0"
-                value={formData.release_name}
-                onChange={handleChange}
-                disabled={loading}
-              />
+            {/* Row 1: Release Name & Build Release */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex items-center gap-3">
+                <Label htmlFor="release_name" className="text-sm font-medium whitespace-nowrap min-w-fit">
+                  New Release Name <span className="text-destructive">*</span>:
+                </Label>
+                <Input
+                  id="release_name"
+                  name="release_name"
+                  type="text"
+                  value={formData.release_name}
+                  onChange={handleChange}
+                  disabled={loading}
+                  className="h-9"
+                />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Label htmlFor="build_release" className="text-sm font-medium whitespace-nowrap min-w-fit">
+                  Build/Jira Release <span className="text-destructive">*</span>:
+                </Label>
+                <Input
+                  id="build_release"
+                  name="build_release"
+                  type="text"
+                  value={formData.build_release}
+                  onChange={handleChange}
+                  disabled={loading}
+                  className="h-9"
+                />
+              </div>
             </div>
 
-            {/* Build/Jira Release */}
-            <div className="space-y-2">
-              <Label htmlFor="build_release">Build/Jira Release <span className="text-destructive">*</span></Label>
-              <Input
-                id="build_release"
-                name="build_release"
-                type="text"
-                placeholder="e.g., BUILD-2024-001"
-                value={formData.build_release}
-                onChange={handleChange}
-                disabled={loading}
-              />
-            </div>
-
-            {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="start_date">Start Date <span className="text-destructive">*</span></Label>
-                <div className="relative">
+            {/* Row 2: Start Date & End Date */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex items-center gap-3">
+                <Label htmlFor="start_date" className="text-sm font-medium whitespace-nowrap min-w-fit">
+                  Start Date <span className="text-destructive">*</span>:
+                </Label>
+                <div className="relative flex-1">
                   <Input
                     id="start_date"
                     name="start_date"
@@ -190,15 +197,17 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.start_date}
                     onChange={handleChange}
                     disabled={loading}
-                    className="pr-10"
+                    className="h-9 pr-9"
                   />
-                  <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Calendar className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="end_date">End Date <span className="text-destructive">*</span></Label>
-                <div className="relative">
+              <div className="flex items-center gap-3">
+                <Label htmlFor="end_date" className="text-sm font-medium whitespace-nowrap min-w-fit">
+                  End Date <span className="text-destructive">*</span>:
+                </Label>
+                <div className="relative flex-1">
                   <Input
                     id="end_date"
                     name="end_date"
@@ -206,16 +215,18 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.end_date}
                     onChange={handleChange}
                     disabled={loading}
-                    className="pr-10"
+                    className="h-9 pr-9"
                   />
-                  <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Calendar className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
                 </div>
               </div>
             </div>
 
-            {/* Previous Structure */}
-            <div className="space-y-3">
-              <Label>Want to use previous release folder structure?</Label>
+            {/* Row 3: Previous Structure */}
+            <div className="flex items-center gap-6 py-2">
+              <Label className="text-sm font-medium whitespace-nowrap">
+                Use previous release folder structure?
+              </Label>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -225,7 +236,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     checked={formData.use_previous_structure === "yes"}
                     onChange={() => handleRadioChange("yes")}
                     disabled={loading}
-                    className="w-4 h-4 text-primary focus:ring-primary"
+                    className="w-3.5 h-3.5 text-primary focus:ring-primary"
                   />
                   <span className="text-sm">Yes</span>
                 </label>
@@ -237,95 +248,105 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     checked={formData.use_previous_structure === "no"}
                     onChange={() => handleRadioChange("no")}
                     disabled={loading}
-                    className="w-4 h-4 text-primary focus:ring-primary"
+                    className="w-3.5 h-3.5 text-primary focus:ring-primary"
                   />
                   <span className="text-sm">No</span>
                 </label>
               </div>
-
+              
               {formData.use_previous_structure === "yes" && (
-                <div className="space-y-2 animate-slide-down">
-                  <Label htmlFor="previous_build_release">Previous Build Release (Jira Release) <span className="text-destructive">*</span></Label>
+                <div className="flex items-center gap-3 flex-1 animate-slide-down">
+                  <Label htmlFor="previous_build_release" className="text-sm font-medium whitespace-nowrap">
+                    Previous Build Release <span className="text-destructive">*</span>:
+                  </Label>
                   <Input
                     id="previous_build_release"
                     name="previous_build_release"
                     type="text"
-                    placeholder="e.g., BUILD-2023-012"
                     value={formData.previous_build_release}
                     onChange={handleChange}
                     disabled={loading}
+                    className="h-9"
                   />
                 </div>
               )}
             </div>
 
-            {/* Phases */}
-            <div className="space-y-3">
-              <Label className="text-base font-semibold">How many Phases you want to create?</Label>
+            {/* Phases Section */}
+            <div className="pt-2 space-y-3 border-t border-border">
+              <Label className="text-sm font-semibold">How many Phases you want to create?</Label>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="load_test_phases">Load Test</Label>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="flex items-center gap-3">
+                  <Label htmlFor="load_test_phases" className="text-sm font-medium whitespace-nowrap min-w-[110px]">
+                    Load Test:
+                  </Label>
                   <Input
                     id="load_test_phases"
                     name="load_test_phases"
                     type="number"
                     min="0"
-                    placeholder="0"
                     value={formData.load_test_phases}
                     onChange={handleChange}
                     disabled={loading}
+                    className="h-9"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="endurance_test_phases">Endurance Test</Label>
+                <div className="flex items-center gap-3">
+                  <Label htmlFor="endurance_test_phases" className="text-sm font-medium whitespace-nowrap min-w-[110px]">
+                    Endurance Test:
+                  </Label>
                   <Input
                     id="endurance_test_phases"
                     name="endurance_test_phases"
                     type="number"
                     min="0"
-                    placeholder="0"
                     value={formData.endurance_test_phases}
                     onChange={handleChange}
                     disabled={loading}
+                    className="h-9"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="sanity_test_phases">Sanity Test</Label>
+                <div className="flex items-center gap-3">
+                  <Label htmlFor="sanity_test_phases" className="text-sm font-medium whitespace-nowrap min-w-[110px]">
+                    Sanity Test:
+                  </Label>
                   <Input
                     id="sanity_test_phases"
                     name="sanity_test_phases"
                     type="number"
                     min="0"
-                    placeholder="0"
                     value={formData.sanity_test_phases}
                     onChange={handleChange}
                     disabled={loading}
+                    className="h-9"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="standalone_test_phases">Standalone Test</Label>
+                <div className="flex items-center gap-3">
+                  <Label htmlFor="standalone_test_phases" className="text-sm font-medium whitespace-nowrap min-w-[110px]">
+                    Standalone Test:
+                  </Label>
                   <Input
                     id="standalone_test_phases"
                     name="standalone_test_phases"
                     type="number"
                     min="0"
-                    placeholder="0"
                     value={formData.standalone_test_phases}
                     onChange={handleChange}
                     disabled={loading}
+                    className="h-9"
                   />
                 </div>
               </div>
             </div>
 
             {/* Submit Button */}
-            <div className="pt-4">
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Creating Release..." : "Create Release"}
+            <div className="pt-3 flex justify-end">
+              <Button type="submit" className="px-8 h-9" disabled={loading}>
+                {loading ? "Creating..." : "Create Release"}
               </Button>
             </div>
           </form>
