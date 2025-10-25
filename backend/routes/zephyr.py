@@ -18,9 +18,22 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/zephyr", tags=["Zephyr Actions"])
 
 
+class PhaseConfig(BaseModel):
+    load_test: int = 0
+    endurance_test: int = 0
+    sanity_test: int = 0
+    standalone_test: int = 0
+
+
 class ReleaseRequest(BaseModel):
     project_id: int
     release_name: str
+    build_release: str
+    start_date: str
+    end_date: str
+    use_previous_structure: bool = False
+    previous_build_release: Optional[str] = None
+    phases: PhaseConfig
     user_soeid: str
 
 
