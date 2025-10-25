@@ -17,6 +17,7 @@ db = client[os.environ.get('DB_NAME', 'cqe_management')]
 users_collection = db['users']
 projects_collection = db['projects']
 releases_collection = db['releases']
+zephyrdata_collection = db['zephyrdata']
 
 
 async def test_connection():
