@@ -9,19 +9,18 @@ export const Navbar = ({ activeTab, setActiveTab, onLogout, selectedProject, sel
   const user = JSON.parse(localStorage.getItem("cqe_user") || "{}");
 
   const handleChangePasscode = () => {
-    alert("Mock: Change passcode functionality would be implemented here");
+    alert("Change passcode functionality will be implemented soon");
     setDropdownOpen(false);
   };
 
   const handleChangeRole = () => {
-    alert("Mock: Change role functionality would be implemented here");
+    alert("Change role functionality will be implemented soon");
     setDropdownOpen(false);
   };
 
   const handleSignOut = () => {
     localStorage.removeItem("cqe_user");
-    localStorage.removeItem("cqe_selected_project");
-    localStorage.removeItem("cqe_selected_release");
+    localStorage.removeItem("cqe_token");
     onLogout();
   };
 
@@ -36,7 +35,7 @@ export const Navbar = ({ activeTab, setActiveTab, onLogout, selectedProject, sel
           <h1 className="text-xl font-bold text-foreground">CQE Project Management</h1>
           {selectedProject && selectedRelease && (
             <p className="text-xs text-muted-foreground">
-              {selectedProject} • {selectedRelease}
+              {selectedProject.name} • {selectedRelease.name}
             </p>
           )}
         </div>
