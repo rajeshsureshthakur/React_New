@@ -51,15 +51,26 @@ async def create_release(request: ReleaseRequest):
     try:
         # Get next release ID
         last_release = await releases_collection.find_one(
-            sort=[("release_id", -1)]
+            sort=[("id", -1)]
         )
-        next_release_id = (last_release['release_id'] if last_release else 0) + 1
+        next_release_id = (last_release['id'] if last_release else 0) + 1
         
         # Create release document
         release_doc = {
-            "release_id": next_release_id,
+            "id": next_release_id,
             "project_id": request.project_id,
-            "release_name": request.release_name,
+            "name": request.release_name,
+            "build_release": request.build_release,
+            "start_date": request.start_date,
+            "end_date": request.end_date,
+            "use_previous_structure": request.use_previous_structure,
+            "previous_build_release": request.previous_build_release,
+            "phases": {
+                "load_test": request.phases.load_test,
+                "endurance_test": request.phases.endurance_test,
+                "sanity_test": request.phases.sanity_test,
+                "standalone_test": request.phases.standalone_test
+            },
             "created_by": request.user_soeid,
             "created_at": get_est_time()
         }
@@ -76,7 +87,7 @@ async def create_release(request: ReleaseRequest):
         
     except Exception as e:
         logger.error(f"❌ Error creating release: {e}")
-        raise HTTPException(status_code=500, detail="Error creating release")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/import-requirements")
