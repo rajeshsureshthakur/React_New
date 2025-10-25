@@ -4,13 +4,18 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
 import { Shield, Lock, User } from "lucide-react";
+import axios from "axios";
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 export const LoginPage = ({ onLogin }) => {
   const [soeid, setSoeid] = useState("");
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -24,9 +29,28 @@ export const LoginPage = ({ onLogin }) => {
       return;
     }
 
-    // Mock login - save to localStorage
-    localStorage.setItem("cqe_user", JSON.stringify({ soeid, loggedIn: true }));
-    onLogin();
+    setLoading(true);
+
+    try {
+      // Call backend API
+      const response = await axios.post(`${API}/auth/login`, {
+        soeid: soeid.toUpperCase(),
+        passcode: passcode
+      });
+
+      if (response.data.success) {
+        // Save user data and token to localStorage
+        localStorage.setItem("cqe_user", JSON.stringify(response.data.user));
+        localStorage.setItem("cqe_token", response.data.token);
+        onLogin();
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.detail || "Login failed. Please check your credentials.";
+      setError(errorMessage);
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -66,6 +90,7 @@ export const LoginPage = ({ onLogin }) => {
                     value={soeid}
                     onChange={(e) => setSoeid(e.target.value)}
                     className="pl-10"
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -85,6 +110,7 @@ export const LoginPage = ({ onLogin }) => {
                       setPasscode(value);
                     }}
                     className="pl-10"
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -92,21 +118,21 @@ export const LoginPage = ({ onLogin }) => {
               <button
                 type="button"
                 className="text-sm text-primary hover:underline"
-                onClick={() => alert("Mock: Forgot passcode functionality would be implemented here")}
+                onClick={() => alert("Please contact your administrator to reset your passcode")}
               >
                 Forgot passcode?
               </button>
             </CardContent>
 
             <CardFooter className="flex flex-col gap-3">
-              <Button type="submit" className="w-full">
-                Sign In
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Signing In..." : "Sign In"}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 className="w-full"
-                onClick={() => alert("Mock: Registration functionality would be implemented here")}
+                onClick={() => window.location.href = "/register"}
               >
                 Register
               </Button>
