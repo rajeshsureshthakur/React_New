@@ -34,14 +34,13 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
   const [selectedReleaseId, setSelectedReleaseId] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Get user from localStorage
-  const user = JSON.parse(localStorage.getItem("cqe_user") || "{}");
-
   useEffect(() => {
+    // Get user from localStorage
+    const user = JSON.parse(localStorage.getItem("cqe_user") || "{}");
     if (user.soeid) {
-      fetchUserProjects();
+      fetchUserProjects(user.soeid);
     }
-  }, [user.soeid]);
+  }, []); // Only run once on mount
 
   useEffect(() => {
     if (selectedProject) {
