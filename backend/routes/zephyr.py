@@ -39,7 +39,8 @@ class ReleaseRequest(BaseModel):
 
 class ImportRequirementsRequest(BaseModel):
     release_id: int
-    file_data: Optional[str] = None
+    project_id: int
+    requirements: list
 
 
 @router.post("/create-release")
