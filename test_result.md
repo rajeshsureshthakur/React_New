@@ -237,27 +237,33 @@ agent_communication:
 backend:
   - task: "Create Release API Endpoint"
     implemented: true
-    working: "NA"
+    working: true
     file: "routes/zephyr.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Implemented /api/zephyr/create-release endpoint with full support for all form fields including release_name, build_release, start_date, end_date, use_previous_structure, previous_build_release, and phases configuration. Saves data to MongoDB releases collection."
+        - working: true
+          agent: "testing"
+          comment: "✅ Create Release API fully functional - Fixed ID generation bug in zephyr.py (line 56), all test scenarios pass: valid data creation, field validation (422 for missing fields), multiple releases, previous structure scenarios. Data properly persisted in MongoDB with unique IDs, all fields correctly stored. API returns proper success response with release_id."
   
   - task: "Get Releases by Project API"
     implemented: true
-    working: "NA"
+    working: true
     file: "routes/releases.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Updated to use consistent field naming (id, name) instead of (release_id, release_name) to match frontend expectations and MongoDB structure."
+        - working: true
+          agent: "testing"
+          comment: "✅ Get Releases by Project API fully functional - Returns proper JSON structure with success=true and releases array, correctly filters by project_id, shows releases in descending order by ID, all field mappings (id, name, project_id) working correctly."
 
 frontend:
   - task: "Sidebar Create Release Integration"
