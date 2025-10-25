@@ -184,12 +184,12 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
             </div>
 
             {/* Row 2: Start Date & End Date */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-8">
               <div className="flex items-center gap-3">
-                <Label htmlFor="start_date" className="text-sm font-medium whitespace-nowrap min-w-fit">
+                <Label htmlFor="start_date" className="text-sm font-medium whitespace-nowrap w-[160px] text-right">
                   Start Date <span className="text-destructive">*</span>:
                 </Label>
-                <div className="relative max-w-[150px]">
+                <div className="relative w-[150px]">
                   <Input
                     id="start_date"
                     name="start_date"
@@ -204,10 +204,10 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
               </div>
 
               <div className="flex items-center gap-3">
-                <Label htmlFor="end_date" className="text-sm font-medium whitespace-nowrap min-w-fit">
+                <Label htmlFor="end_date" className="text-sm font-medium whitespace-nowrap w-[160px] text-right">
                   End Date <span className="text-destructive">*</span>:
                 </Label>
-                <div className="relative max-w-[150px]">
+                <div className="relative w-[150px]">
                   <Input
                     id="end_date"
                     name="end_date"
