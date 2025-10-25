@@ -239,22 +239,39 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
             {selectedProject && (
               <div className="space-y-2">
                 <Label className="text-xs font-medium text-muted-foreground">Select Release</Label>
-                <Select value={selectedReleaseId} onValueChange={handleReleaseSelect}>
-                  <SelectTrigger disabled={!selectedProject}>
-                    <SelectValue 
-                      placeholder={selectedProject ? "Select release" : "Select project first"} 
-                      options={releases.map(r => ({value: String(r.id), label: r.name}))} 
-                      value={selectedReleaseId} 
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {releases.map((release) => (
-                      <SelectItem key={release.id} value={String(release.id)}>
-                        {release.name} (ID: {release.id})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select value={selectedReleaseId} onValueChange={handleReleaseSelect}>
+                    <SelectTrigger disabled={!selectedProject}>
+                      <SelectValue 
+                        placeholder={selectedProject ? "Select release" : "Select project first"} 
+                        options={filteredReleases.map(r => ({value: String(r.id), label: r.name}))} 
+                        value={selectedReleaseId} 
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <div className="px-2 pb-2">
+                        <Input
+                          placeholder="Search releases..."
+                          value={releaseSearchTerm}
+                          onChange={(e) => setReleaseSearchTerm(e.target.value)}
+                          className="h-8"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </div>
+                      {filteredReleases.length > 0 ? (
+                        filteredReleases.map((release) => (
+                          <SelectItem key={release.id} value={String(release.id)}>
+                            {release.name} (ID: {release.id})
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                          No releases found
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             )}
           </div>
