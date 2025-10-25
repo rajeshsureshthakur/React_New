@@ -128,8 +128,8 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
   };
 
   return (
-    <div className="animate-fade-in max-w-5xl">
-      <Card className="shadow-elegant">
+    <div className="animate-fade-in flex justify-center">
+      <Card className="shadow-elegant w-full max-w-4xl">
         <CardHeader className="pb-4">
           <CardTitle className="text-xl">Create New Release</CardTitle>
           <CardDescription className="text-sm">
@@ -137,7 +137,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 px-8">
             {error && (
               <div className="bg-destructive/10 text-destructive px-3 py-2 rounded-lg text-sm">
                 {error}
