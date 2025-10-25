@@ -33,6 +33,7 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
   const [selectedProject, setSelectedProject] = useState("");
   const [selectedReleaseId, setSelectedReleaseId] = useState("");
   const [loading, setLoading] = useState(false);
+  const [releaseSearchTerm, setReleaseSearchTerm] = useState("");
 
   useEffect(() => {
     // Get user from localStorage
