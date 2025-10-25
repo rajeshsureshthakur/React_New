@@ -223,8 +223,8 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
             </div>
 
             {/* Row 3: Previous Structure */}
-            <div className="flex items-center gap-6 py-2">
-              <Label className="text-sm font-medium whitespace-nowrap">
+            <div className="flex items-center gap-6 py-2 pl-4">
+              <Label className="text-sm font-medium whitespace-nowrap w-[250px] text-right">
                 Use previous release folder structure?
               </Label>
               <div className="flex gap-4">
@@ -255,7 +255,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
               </div>
               
               {formData.use_previous_structure === "yes" && (
-                <div className="flex items-center gap-3 flex-1 animate-slide-down">
+                <div className="flex items-center gap-3 animate-slide-down ml-6">
                   <Label htmlFor="previous_build_release" className="text-sm font-medium whitespace-nowrap">
                     Previous Build Release <span className="text-destructive">*</span>:
                   </Label>
@@ -266,7 +266,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.previous_build_release}
                     onChange={handleChange}
                     disabled={loading}
-                    className="h-9 max-w-[180px]"
+                    className="h-9 w-[180px]"
                   />
                 </div>
               )}
