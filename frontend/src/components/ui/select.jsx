@@ -87,8 +87,12 @@ const SelectItem = React.forwardRef(
         className
       )}
       onClick={() => {
-        onValueChange(value);
-        setOpen(false);
+        if (onValueChange && typeof onValueChange === 'function') {
+          onValueChange(value);
+        }
+        if (setOpen && typeof setOpen === 'function') {
+          setOpen(false);
+        }
       }}
       {...props}
     >
