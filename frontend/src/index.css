@@ -2,22 +2,112 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    margin: 0;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-        sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 
-code {
-    font-family:
-        source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+@layer base {
+    :root {
+        /* Professional Blue-Gray Enterprise Palette */
+        --background: 210 20% 98%;
+        --foreground: 215 25% 15%;
+        
+        --card: 0 0% 100%;
+        --card-foreground: 215 25% 15%;
+        
+        --popover: 0 0% 100%;
+        --popover-foreground: 215 25% 15%;
+        
+        --primary: 217 75% 48%;
+        --primary-foreground: 0 0% 100%;
+        --primary-hover: 217 75% 42%;
+        
+        --secondary: 210 15% 92%;
+        --secondary-foreground: 215 25% 20%;
+        
+        --muted: 210 15% 96%;
+        --muted-foreground: 215 15% 45%;
+        
+        --accent: 25 90% 55%;
+        --accent-foreground: 0 0% 100%;
+        
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 100%;
+        
+        --success: 142 76% 42%;
+        --success-foreground: 0 0% 100%;
+        
+        --border: 214 20% 88%;
+        --input: 214 20% 88%;
+        --ring: 217 75% 48%;
+        
+        --radius: 0.5rem;
+        
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --shadow-elegant: 0 8px 24px -4px hsl(217 75% 48% / 0.15);
+        
+        /* Gradients */
+        --gradient-primary: linear-gradient(135deg, hsl(217 75% 48%), hsl(217 75% 58%));
+        --gradient-subtle: linear-gradient(180deg, hsl(210 20% 98%), hsl(210 15% 96%));
+        
+        /* Transitions */
+        --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .dark {
+        --background: 215 25% 10%;
+        --foreground: 210 20% 95%;
+        
+        --card: 215 22% 13%;
+        --card-foreground: 210 20% 95%;
+        
+        --popover: 215 22% 13%;
+        --popover-foreground: 210 20% 95%;
+        
+        --primary: 217 75% 55%;
+        --primary-foreground: 0 0% 100%;
+        --primary-hover: 217 75% 48%;
+        
+        --secondary: 215 20% 18%;
+        --secondary-foreground: 210 20% 85%;
+        
+        --muted: 215 20% 16%;
+        --muted-foreground: 215 15% 60%;
+        
+        --accent: 25 90% 55%;
+        --accent-foreground: 0 0% 100%;
+        
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 100%;
+        
+        --success: 142 76% 42%;
+        --success-foreground: 0 0% 100%;
+        
+        --border: 215 20% 22%;
+        --input: 215 20% 22%;
+        --ring: 217 75% 55%;
+    }
 }
 
 @layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Space Grotesk', 'Inter', sans-serif;
+    }
+    code {
+        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+    }
+    
     [data-debug-wrapper="true"] {
         display: contents !important;
     }
@@ -46,5 +136,33 @@ code {
         border-right-color: inherit;
         border-top-color: inherit;
         border-bottom-color: inherit;
+    }
+}
+
+@layer components {
+    .btn-hover-lift {
+        @apply hover:-translate-y-0.5 transition-all duration-200;
+    }
+    
+    .card-hover {
+        @apply hover:shadow-lg transition-shadow duration-300;
+    }
+    
+    .sidebar-item {
+        @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200;
+    }
+    
+    .sidebar-item:hover {
+        @apply bg-secondary text-secondary-foreground;
+    }
+    
+    .sidebar-item.active {
+        @apply bg-primary text-primary-foreground;
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
     }
 }
