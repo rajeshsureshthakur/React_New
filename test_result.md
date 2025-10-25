@@ -221,9 +221,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Create Release API Endpoint"
     - "Sidebar Create Release Integration"
     - "Create Release Form"
+    - "Dashboard View Switching"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
