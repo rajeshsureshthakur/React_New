@@ -100,12 +100,11 @@ async def validate_zephyr_token(request: ValidateZephyrTokenRequest):
         # Mock Zephyr API response - simulating project data with integer IDs
         # In production, you would call: GET https://api.zephyrscale.smartbear.com/v2/projects
         mock_projects = [
-            {"id": 92, "name": "CQE Platform"},
-            {"id": 101, "name": "Test Automation Suite"},
-            {"id": 115, "name": "API Gateway"},
-            {"id": 128, "name": "Analytics Engine"},
-            {"id": 147, "name": "Mobile Application"},
-            {"id": 156, "name": "Data Pipeline"},
+            {"id": 1, "name": "CQE Platform"},
+            {"id": 2, "name": "Test Automation Suite"},
+            {"id": 3, "name": "Performance Testing"},
+            {"id": 4, "name": "API Testing Framework"},
+            {"id": 5, "name": "Mobile App Testing"},
         ]
         
         logger.info(f"✅ Zephyr token validated, returning {len(mock_projects)} projects")
