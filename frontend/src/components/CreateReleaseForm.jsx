@@ -163,7 +163,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                   value={formData.release_name}
                   onChange={handleChange}
                   disabled={loading}
-                  className="h-9"
+                  className="h-9 max-w-[180px]"
                 />
               </div>
 
@@ -178,7 +178,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                   value={formData.build_release}
                   onChange={handleChange}
                   disabled={loading}
-                  className="h-9"
+                  className="h-9 max-w-[180px]"
                 />
               </div>
             </div>
