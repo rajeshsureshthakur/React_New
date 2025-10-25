@@ -53,7 +53,10 @@ async def create_release(request: ReleaseRequest):
         last_release = await releases_collection.find_one(
             sort=[("id", -1)]
         )
-        next_release_id = (last_release['id'] if last_release else 0) + 1
+        if last_release and 'id' in last_release:
+            next_release_id = last_release['id'] + 1
+        else:
+            next_release_id = 1
         
         # Create release document
         release_doc = {
