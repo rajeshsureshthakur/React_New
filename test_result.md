@@ -235,6 +235,8 @@ agent_communication:
       message: "Implementing 'Create Release' functionality: Fixed Sidebar.jsx to accept onMenuAction prop, updated backend zephyr.py to accept all form fields (build_release, start_date, end_date, use_previous_structure, previous_build_release, phases), updated releases.py for consistent field naming (id, name instead of release_id, release_name). Ready for backend testing."
     - agent: "testing"
       message: "Backend testing completed successfully. Fixed critical ID generation bug in zephyr.py and verified all Create Release functionality. Both Create Release API (/api/zephyr/create-release) and Get Releases by Project API (/api/releases/by-project/{project_id}) are fully functional with proper validation, data persistence, and response formats. All 7 test scenarios passed including edge cases."
+    - agent: "main"
+      message: "Fixed release dropdown issue: Database was empty, created seed_mongodb.py script to populate initial projects and releases. Fixed field naming inconsistency (added both 'id'/'name' and 'project_id'/'project_name' fields). Updated mock Zephyr API to return project IDs 1-5 matching seeded data. Release creation saves all data to MongoDB. Release dropdown now shows releases when project is selected."
 
 backend:
   - task: "Create Release API Endpoint"
