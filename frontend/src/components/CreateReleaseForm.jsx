@@ -151,9 +151,9 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
             )}
 
             {/* Row 1: Release Name & Build Release */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-8">
               <div className="flex items-center gap-3">
-                <Label htmlFor="release_name" className="text-sm font-medium whitespace-nowrap min-w-fit">
+                <Label htmlFor="release_name" className="text-sm font-medium whitespace-nowrap w-[160px] text-right">
                   New Release Name <span className="text-destructive">*</span>:
                 </Label>
                 <Input
@@ -163,12 +163,12 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                   value={formData.release_name}
                   onChange={handleChange}
                   disabled={loading}
-                  className="h-9 max-w-[180px]"
+                  className="h-9 w-[180px]"
                 />
               </div>
 
               <div className="flex items-center gap-3">
-                <Label htmlFor="build_release" className="text-sm font-medium whitespace-nowrap min-w-fit">
+                <Label htmlFor="build_release" className="text-sm font-medium whitespace-nowrap w-[160px] text-right">
                   Build/Jira Release <span className="text-destructive">*</span>:
                 </Label>
                 <Input
@@ -178,7 +178,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                   value={formData.build_release}
                   onChange={handleChange}
                   disabled={loading}
-                  className="h-9 max-w-[180px]"
+                  className="h-9 w-[180px]"
                 />
               </div>
             </div>
