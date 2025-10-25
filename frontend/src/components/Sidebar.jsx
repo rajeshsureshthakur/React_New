@@ -202,6 +202,15 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
     if (!selectedReleaseId) {
       return;
     }
+    
+    if (subItem.id === "import-requirements") {
+      // Trigger import requirements form
+      if (onMenuAction) {
+        onMenuAction("import-requirements");
+      }
+      return;
+    }
+    
     alert(`${subItem.label} - This functionality will be fully implemented soon`);
   };
 
