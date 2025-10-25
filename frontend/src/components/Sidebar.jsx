@@ -50,10 +50,10 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
     }
   }, [selectedProject]);
 
-  const fetchUserProjects = async () => {
+  const fetchUserProjects = async (soeid) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API}/projects/user/${user.soeid}`);
+      const response = await axios.get(`${API}/projects/user/${soeid}`);
       if (response.data.success) {
         setProjects(response.data.projects);
       }
