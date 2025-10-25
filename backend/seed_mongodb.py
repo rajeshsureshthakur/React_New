@@ -24,27 +24,37 @@ async def seed_database():
     projects = [
         {
             "id": 1,
+            "project_id": 1,
             "name": "CQE Platform",
+            "project_name": "CQE Platform",
             "description": "Core CQE testing platform"
         },
         {
             "id": 2,
+            "project_id": 2,
             "name": "Test Automation Suite",
+            "project_name": "Test Automation Suite",
             "description": "Automated testing framework"
         },
         {
             "id": 3,
+            "project_id": 3,
             "name": "Performance Testing",
+            "project_name": "Performance Testing",
             "description": "Load and performance testing project"
         },
         {
             "id": 4,
+            "project_id": 4,
             "name": "API Testing Framework",
+            "project_name": "API Testing Framework",
             "description": "RESTful API testing suite"
         },
         {
             "id": 5,
+            "project_id": 5,
             "name": "Mobile App Testing",
+            "project_name": "Mobile App Testing",
             "description": "Mobile application testing"
         }
     ]
