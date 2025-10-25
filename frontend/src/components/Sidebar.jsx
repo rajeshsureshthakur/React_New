@@ -214,7 +214,7 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
               <Select value={selectedProject} onValueChange={handleProjectSelect}>
                 <SelectTrigger>
                   <SelectValue 
-                    placeholder={loading ? "Loading..." : "Choose project"} 
+                    placeholder={loading ? "Loading..." : "Select project"} 
                     options={projects.map(p => ({value: String(p.id), label: p.name}))} 
                     value={selectedProject} 
                   />
