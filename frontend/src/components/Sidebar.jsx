@@ -91,7 +91,13 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
     if (release && onReleaseChange) {
       onReleaseChange(release.id, release.name);
     }
+    setReleaseSearchTerm(""); // Clear search term after selection
   };
+
+  // Filter releases based on search term
+  const filteredReleases = releases.filter(release =>
+    release.name.toLowerCase().includes(releaseSearchTerm.toLowerCase())
+  );
 
   const zephyrMenuItems = [
     {
