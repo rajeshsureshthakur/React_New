@@ -274,11 +274,11 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
 
             {/* Phases Section */}
             <div className="pt-2 space-y-3 border-t border-border">
-              <Label className="text-sm font-semibold">How many Phases you want to create?</Label>
+              <Label className="text-sm font-semibold block text-center">How many Phases you want to create?</Label>
               
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-8">
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="load_test_phases" className="text-sm font-medium whitespace-nowrap min-w-[110px]">
+                  <Label htmlFor="load_test_phases" className="text-sm font-medium whitespace-nowrap w-[160px] text-right">
                     Load Test:
                   </Label>
                   <Input
@@ -289,12 +289,12 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.load_test_phases}
                     onChange={handleChange}
                     disabled={loading}
-                    className="h-9 max-w-[90px]"
+                    className="h-9 w-[90px]"
                   />
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="endurance_test_phases" className="text-sm font-medium whitespace-nowrap min-w-[110px]">
+                  <Label htmlFor="endurance_test_phases" className="text-sm font-medium whitespace-nowrap w-[160px] text-right">
                     Endurance Test:
                   </Label>
                   <Input
@@ -305,12 +305,12 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.endurance_test_phases}
                     onChange={handleChange}
                     disabled={loading}
-                    className="h-9 max-w-[90px]"
+                    className="h-9 w-[90px]"
                   />
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="sanity_test_phases" className="text-sm font-medium whitespace-nowrap min-w-[110px]">
+                  <Label htmlFor="sanity_test_phases" className="text-sm font-medium whitespace-nowrap w-[160px] text-right">
                     Sanity Test:
                   </Label>
                   <Input
@@ -321,12 +321,12 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.sanity_test_phases}
                     onChange={handleChange}
                     disabled={loading}
-                    className="h-9 max-w-[90px]"
+                    className="h-9 w-[90px]"
                   />
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="standalone_test_phases" className="text-sm font-medium whitespace-nowrap min-w-[110px]">
+                  <Label htmlFor="standalone_test_phases" className="text-sm font-medium whitespace-nowrap w-[160px] text-right">
                     Standalone Test:
                   </Label>
                   <Input
@@ -337,7 +337,7 @@ export const CreateReleaseForm = ({ selectedProject, onReleaseCreated }) => {
                     value={formData.standalone_test_phases}
                     onChange={handleChange}
                     disabled={loading}
-                    className="h-9 max-w-[90px]"
+                    className="h-9 w-[90px]"
                   />
                 </div>
               </div>
