@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 import pytz
 
-from routes import auth, projects, releases, dashboard
+from routes import auth, projects, releases, dashboard, zephyr
 from database.mongodb import db, test_connection
 
 # Configure logging
@@ -36,6 +36,7 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(projects.router, prefix="/api")
 app.include_router(releases.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
+app.include_router(zephyr.router, prefix="/api")
 
 
 @app.on_event("startup")
