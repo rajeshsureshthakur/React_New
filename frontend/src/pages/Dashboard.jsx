@@ -68,6 +68,11 @@ export const Dashboard = ({ onLogout }) => {
               selectedProject={selectedProject}
               onReleaseCreated={handleReleaseCreated}
             />
+          ) : activeView === "import-requirements" ? (
+            <ImportRequirementsForm
+              selectedProject={selectedProject}
+              selectedRelease={selectedRelease}
+            />
           ) : (
             activeTab === "zephyr" ? (
               <ZephyrContent 
