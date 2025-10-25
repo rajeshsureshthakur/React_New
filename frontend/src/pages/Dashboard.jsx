@@ -26,6 +26,8 @@ export const Dashboard = ({ onLogout }) => {
   const handleMenuAction = (action) => {
     if (action === "create-release") {
       setActiveView("create-release");
+    } else if (action === "import-requirements") {
+      setActiveView("import-requirements");
     } else {
       setActiveView("dashboard");
     }
