@@ -236,7 +236,7 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
                 <Select value={selectedReleaseId} onValueChange={handleReleaseSelect}>
                   <SelectTrigger disabled={!selectedProject}>
                     <SelectValue 
-                      placeholder={selectedProject ? "Choose release" : "Select project first"} 
+                      placeholder={selectedProject ? "Select release" : "Select project first"} 
                       options={releases.map(r => ({value: String(r.id), label: r.name}))} 
                       value={selectedReleaseId} 
                     />
