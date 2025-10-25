@@ -164,11 +164,24 @@ export const Sidebar = ({ activeTab, selectedRelease, onProjectChange, onRelease
   const menuItems = activeTab === "zephyr" ? zephyrMenuItems : jiraMenuItems;
 
   const isItemEnabled = (item) => {
-    return item.alwaysEnabled || (selectedReleaseId !== "");
+    // Create Release is enabled only when project is selected
+    if (item.id === "create-release") {
+      return selectedProject !== null && selectedProject !== "";
+    }
+    // All other items need release selection
+    return selectedReleaseId !== "";
   };
 
   const handleItemClick = (item) => {
     if (!isItemEnabled(item)) {
+      return;
+    }
+
+    if (item.id === "create-release") {
+      // Trigger create release form
+      if (onMenuAction) {
+        onMenuAction("create-release");
+      }
       return;
     }
 
