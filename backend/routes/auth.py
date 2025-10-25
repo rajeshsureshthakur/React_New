@@ -5,11 +5,11 @@ from pydantic import BaseModel, Field, validator
 import hashlib
 import logging
 import re
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime, timedelta
 from jose import jwt
 
-from database.mongodb import users_collection, get_est_time
+from database.mongodb import users_collection, projects_collection, get_est_time
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -20,15 +20,24 @@ JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480
 
 
+class ZephyrProject(BaseModel):
+    id: str
+    name: str
+
+
+class ValidateZephyrTokenRequest(BaseModel):
+    token: str
+
+
 class RegisterRequest(BaseModel):
     soeid: str = Field(..., description="SOEID in format: 2 letters + 5 digits")
     full_name: str = Field(..., description="Full name of the user")
     passcode: str = Field(..., min_length=4, max_length=4, description="4 digit passcode")
     zephyr_token: str = Field(..., description="Zephyr API token")
     jira_token: str = Field(..., description="Jira API token")
-    project_id: str = Field(..., description="Project ID")
-    project_name: str = Field(..., description="Project Name")
+    selected_project_id: str = Field(..., description="Selected Project ID")
     manager_soeid: str = Field(..., description="Manager/Lead SOEID")
+    projects_data: List[ZephyrProject] = Field(..., description="Projects fetched from Zephyr")
     
     @validator('soeid')
     def validate_soeid(cls, v):
@@ -74,6 +83,48 @@ def create_access_token(data: dict) -> str:
     return jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
 
 
+@router.post("/validate-zephyr-token")
+async def validate_zephyr_token(request: ValidateZephyrTokenRequest):
+    """Validate Zephyr token and fetch projects
+    
+    This is a mock implementation. In production, this would call actual Zephyr API.
+    """
+    try:
+        # Mock validation - check if token is not empty and has minimum length
+        if len(request.token) < 10:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid Zephyr token format"
+            )
+        
+        # Mock Zephyr API response - simulating project data
+        # In production, you would call: GET https://api.zephyrscale.smartbear.com/v2/projects
+        mock_projects = [
+            {"id": "PROJ001", "name": "CQE Platform"},
+            {"id": "PROJ002", "name": "Test Automation Suite"},
+            {"id": "PROJ003", "name": "API Gateway"},
+            {"id": "PROJ004", "name": "Analytics Engine"},
+            {"id": "PROJ005", "name": "Mobile Application"},
+        ]
+        
+        logger.info(f"✅ Zephyr token validated, returning {len(mock_projects)} projects")
+        
+        return {
+            "success": True,
+            "message": "Token validated successfully",
+            "projects": mock_projects
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Token validation error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error validating Zephyr token"
+        )
+
+
 @router.post("/register")
 async def register(request: RegisterRequest):
     """Register a new user"""
@@ -95,6 +146,9 @@ async def register(request: RegisterRequest):
         # Hash password
         hashed_password = hash_password(request.passcode)
         
+        # Extract project IDs for zephyr_projectlist (comma-separated)
+        project_ids = ",".join([p.id for p in request.projects_data])
+        
         # Create user document with specified defaults
         user_doc = {
             "user_id": next_user_id,
@@ -105,13 +159,12 @@ async def register(request: RegisterRequest):
             "user_teamid": "1",  # Default as specified
             "zephyr_token": request.zephyr_token,
             "jira_token": request.jira_token,
-            "zephyr_projectid": request.project_id,
-            "jira_projectid": request.project_id,  # Same as zephyr_projectid
-            "project_name": request.project_name,
+            "zephyr_projectid": request.selected_project_id,
+            "jira_projectid": request.selected_project_id,  # Same as zephyr_projectid
             "manager_soeid": request.manager_soeid,
             "last_login": get_est_time(),
             "manager_verified": "0",  # Default as specified
-            "zephyr_projectlist": "1,2,3,4",  # Default as specified
+            "zephyr_projectlist": project_ids,  # Comma-separated project IDs from Zephyr
             "curr_version": "1.4",  # Default as specified
             "lib_flag": "No",  # Default as specified
             "created_at": get_est_time()
@@ -120,7 +173,20 @@ async def register(request: RegisterRequest):
         # Insert user
         result = await users_collection.insert_one(user_doc)
         
+        # Save projects to projects collection
+        for project in request.projects_data:
+            # Check if project already exists
+            existing_project = await projects_collection.find_one({"project_id": project.id})
+            if not existing_project:
+                await projects_collection.insert_one({
+                    "project_id": project.id,
+                    "project_name": project.name,
+                    "created_at": get_est_time()
+                })
+        
         logger.info(f"✅ New user registered: {request.soeid}")
+        logger.info(f"   Projects saved: {project_ids}")
+        logger.info(f"   Selected project: {request.selected_project_id}")
         
         return {
             "success": True,

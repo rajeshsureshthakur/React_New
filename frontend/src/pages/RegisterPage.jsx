@@ -4,7 +4,8 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
-import { Shield, User, Lock, Key, Info } from "lucide-react";
+import { Shield, User, Lock, Key, Info, CheckCircle2, Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -18,12 +19,14 @@ export const RegisterPage = () => {
     passcode: "",
     zephyr_token: "",
     jira_token: "",
-    project_id: "",
-    project_name: "",
+    selected_project_id: "",
     manager_soeid: ""
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [tokenValidating, setTokenValidating] = useState(false);
+  const [tokenValidated, setTokenValidated] = useState(false);
+  const [projects, setProjects] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,6 +34,33 @@ export const RegisterPage = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleZephyrTokenBlur = async () => {
+    if (!formData.zephyr_token || formData.zephyr_token.length < 10) {
+      return;
+    }
+
+    setTokenValidating(true);
+    setError("");
+
+    try {
+      const response = await axios.post(`${API}/auth/validate-zephyr-token`, {
+        token: formData.zephyr_token
+      });
+
+      if (response.data.success) {
+        setProjects(response.data.projects);
+        setTokenValidated(true);
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.detail || "Invalid Zephyr token. Please check and try again.";
+      setError(errorMessage);
+      setTokenValidated(false);
+      setProjects([]);
+    } finally {
+      setTokenValidating(false);
+    }
   };
 
   const validateForm = () => {
@@ -53,8 +83,20 @@ export const RegisterPage = () => {
       return false;
     }
 
+    // Check Zephyr token validated
+    if (!tokenValidated) {
+      setError("Please enter a valid Zephyr token");
+      return false;
+    }
+
+    // Check project selected
+    if (!formData.selected_project_id) {
+      setError("Please select a project");
+      return false;
+    }
+
     // Check all required fields
-    const requiredFields = ['soeid', 'full_name', 'passcode', 'zephyr_token', 'jira_token', 'project_id', 'project_name', 'manager_soeid'];
+    const requiredFields = ['soeid', 'full_name', 'passcode', 'zephyr_token', 'jira_token', 'manager_soeid'];
     for (const field of requiredFields) {
       if (!formData[field].trim()) {
         setError("All fields are required");
@@ -76,7 +118,16 @@ export const RegisterPage = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/auth/register`, formData);
+      const response = await axios.post(`${API}/auth/register`, {
+        soeid: formData.soeid,
+        full_name: formData.full_name,
+        passcode: formData.passcode,
+        zephyr_token: formData.zephyr_token,
+        jira_token: formData.jira_token,
+        selected_project_id: formData.selected_project_id,
+        manager_soeid: formData.manager_soeid,
+        projects_data: projects
+      });
       
       if (response.data.success) {
         alert("Registration successful! Please login.");
@@ -93,7 +144,7 @@ export const RegisterPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted to-background flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl animate-fade-in">
+      <div className="w-full max-w-xl animate-fade-in">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4 shadow-elegant">
@@ -119,7 +170,7 @@ export const RegisterPage = () => {
               
               {/* SOEID */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="soeid" className="text-foreground w-40 text-right">
+                <Label htmlFor="soeid" className="text-foreground w-32 text-right">
                   SOEID <span className="text-destructive">*</span>:
                 </Label>
                 <div className="flex-1 relative">
@@ -128,7 +179,7 @@ export const RegisterPage = () => {
                     id="soeid"
                     name="soeid"
                     type="text"
-                    placeholder="2 letters + 5 digits (e.g., AB12345)"
+                    placeholder="e.g., AB12345"
                     value={formData.soeid}
                     onChange={handleChange}
                     className="pl-10"
@@ -139,7 +190,7 @@ export const RegisterPage = () => {
 
               {/* Full Name */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="full_name" className="text-foreground w-40 text-right">
+                <Label htmlFor="full_name" className="text-foreground w-32 text-right">
                   Full Name <span className="text-destructive">*</span>:
                 </Label>
                 <div className="flex-1">
@@ -156,7 +207,7 @@ export const RegisterPage = () => {
 
               {/* Passcode */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="passcode" className="text-foreground w-40 text-right">
+                <Label htmlFor="passcode" className="text-foreground w-32 text-right">
                   Passcode <span className="text-destructive">*</span>:
                 </Label>
                 <div className="flex-1 relative">
@@ -179,7 +230,7 @@ export const RegisterPage = () => {
 
               {/* Zephyr Token */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="zephyr_token" className="text-foreground w-40 text-right flex items-center justify-end gap-1">
+                <Label htmlFor="zephyr_token" className="text-foreground w-32 text-right flex items-center justify-end gap-1">
                   Zephyr Token <span className="text-destructive">*</span>:
                   <div className="group relative">
                     <Info className="w-4 h-4 text-muted-foreground cursor-help" />
@@ -190,6 +241,12 @@ export const RegisterPage = () => {
                 </Label>
                 <div className="flex-1 relative">
                   <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  {tokenValidating && (
+                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary animate-spin" />
+                  )}
+                  {tokenValidated && !tokenValidating && (
+                    <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-success" />
+                  )}
                   <Input
                     id="zephyr_token"
                     name="zephyr_token"
@@ -197,14 +254,41 @@ export const RegisterPage = () => {
                     placeholder="Enter Zephyr API token"
                     value={formData.zephyr_token}
                     onChange={handleChange}
-                    className="pl-10"
+                    onBlur={handleZephyrTokenBlur}
+                    className="pl-10 pr-10"
                   />
                 </div>
               </div>
 
+              {/* Project Selection - shown after token validation */}
+              {tokenValidated && projects.length > 0 && (
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="selected_project_id" className="text-foreground w-32 text-right">
+                    Project <span className="text-destructive">*</span>:
+                  </Label>
+                  <div className="flex-1">
+                    <Select 
+                      value={formData.selected_project_id} 
+                      onValueChange={(value) => setFormData(prev => ({...prev, selected_project_id: value}))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a project" options={projects} value={formData.selected_project_id} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {projects.map((project) => (
+                          <SelectItem key={project.id} value={project.id}>
+                            {project.name} (ID: {project.id})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
               {/* Jira Token */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="jira_token" className="text-foreground w-40 text-right flex items-center justify-end gap-1">
+                <Label htmlFor="jira_token" className="text-foreground w-32 text-right flex items-center justify-end gap-1">
                   Jira Token <span className="text-destructive">*</span>:
                   <div className="group relative">
                     <Info className="w-4 h-4 text-muted-foreground cursor-help" />
@@ -227,43 +311,9 @@ export const RegisterPage = () => {
                 </div>
               </div>
 
-              {/* Project ID */}
-              <div className="flex items-center gap-4">
-                <Label htmlFor="project_id" className="text-foreground w-40 text-right">
-                  Project ID <span className="text-destructive">*</span>:
-                </Label>
-                <div className="flex-1">
-                  <Input
-                    id="project_id"
-                    name="project_id"
-                    type="text"
-                    placeholder="Enter project ID"
-                    value={formData.project_id}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              {/* Project Name */}
-              <div className="flex items-center gap-4">
-                <Label htmlFor="project_name" className="text-foreground w-40 text-right">
-                  Project Name <span className="text-destructive">*</span>:
-                </Label>
-                <div className="flex-1">
-                  <Input
-                    id="project_name"
-                    name="project_name"
-                    type="text"
-                    placeholder="Enter project name"
-                    value={formData.project_name}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
               {/* Manager SOEID */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="manager_soeid" className="text-foreground w-40 text-right">
+                <Label htmlFor="manager_soeid" className="text-foreground w-32 text-right">
                   Manager SOEID <span className="text-destructive">*</span>:
                 </Label>
                 <div className="flex-1 relative">
@@ -272,7 +322,7 @@ export const RegisterPage = () => {
                     id="manager_soeid"
                     name="manager_soeid"
                     type="text"
-                    placeholder="2 letters + 5 digits (e.g., AB12345)"
+                    placeholder="e.g., AB12345"
                     value={formData.manager_soeid}
                     onChange={handleChange}
                     className="pl-10"
@@ -283,7 +333,7 @@ export const RegisterPage = () => {
             </CardContent>
 
             <CardFooter className="flex flex-col gap-3">
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full" disabled={loading || !tokenValidated}>
                 {loading ? "Registering..." : "Register"}
               </Button>
               <Button
