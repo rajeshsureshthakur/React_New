@@ -7,9 +7,12 @@ const Select = ({ children, value, onValueChange }) => {
 
   return (
     <div className="relative">
-      {React.Children.map(children, child =>
-        React.cloneElement(child, { open, setOpen, value, onValueChange })
-      )}
+      {React.Children.map(children, child => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, { open, setOpen, value, onValueChange });
+        }
+        return child;
+      })}
     </div>
   );
 };
